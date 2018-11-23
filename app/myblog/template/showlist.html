@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>文章</h3>
+<ul>
+    {% for article in articles %}
+    <li>{{ article.date }}<a href="/show/?pk={{ article.id }}">{{ article.title }}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

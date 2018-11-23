@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="/static/css/button.css">
+<form action="/show/" method="get">
+
+    <input title="关键词" type="text" name="q" value="">
+    <button type="submit" class="ui-button ui-button-sgreen">&nbsp;搜索&nbsp;</button>
+
+</form>
+<h3>文章</h3>
+<ul>
+    {% for article in articles %}
+    <li>{{ article.date|date:"Y-m-d H:i" }} |
+        <a href="/show/?pk={{ article.id }}">  {{ article.title }}</a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
