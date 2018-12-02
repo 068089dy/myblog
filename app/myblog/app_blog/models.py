@@ -3,6 +3,7 @@ import django.utils.timezone as timezone
 
 # Create your models here.
 from mdeditor.fields import MDTextField
+from .widget import MyTextInput
 
 
 class Article(models.Model):

@@ -1,4 +1,5 @@
 1.安装mysql，并修改app/myblog/myblog/setting.py中的数据库设置
+
 编码配置：https://chengfy.com/post/3
 
 2.构建docker镜像及容器
@@ -20,4 +21,12 @@
 # apt-get install python-certbot-nginx -y
 # certbot --nginx
 # certbot renew --dry-run
+```
+
+5.ssh设置
+
+修改/etc/ssh/sshd_config，允许root远程登录，记得设置root用户密码
+```
+PermitRootLogin yes
+/etc/init.d/ssh restart
 ```

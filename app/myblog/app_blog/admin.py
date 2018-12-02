@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Article, Comment, Tag, Classification, Visitor
 import requests
 import json
+from .forms import ArticleForm
 # Register your models here.
 
 
@@ -25,8 +26,11 @@ admin.site.register(Visitor, VisitorAdmin)
 # 注册数据表Articles
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
+
+
     list_display = ('date', 'title', 'volume')
     # fields = ['title', 'description', 'tags', 'content']
+    form = ArticleForm
     fieldsets = (
         (u'基本信息', {
             'fields': (

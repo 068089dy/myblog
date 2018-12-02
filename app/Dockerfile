@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 
 RUN apt update -y && \
-    apt install python3 python3-pip nginx redis-server supervisor python3-mysqldb language-pack-zh-hans -y && \
+    apt install python3 python3-pip nginx redis-server supervisor python3-mysqldb language-pack-zh-hans ssh -y && \
     pip3 install --upgrade pip && \
     apt install software-properties-common -y && \
     add-apt-repository ppa:certbot/certbot -y && \

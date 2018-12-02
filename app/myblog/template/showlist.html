@@ -1,11 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
+<title>068089DY's Blog</title>
+
+
+<style>
+.pagination {
+    display: inline-block;
+}
+
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+}
+
+.pagination a.active {
+    background-color: #4CAF50;
+    color: white;
+    border: 1px solid #4CAF50;
+}
+
+.pagination a:hover:not(.active) {background-color: #ddd;}
+</style>
 
 <h3>文章</h3>
 <ul>
     {% for article in articles %}
-    <li>{{ article.date }}<a href="/show/?pk={{ article.id }}">{{ article.title }}</a></li>
+    <li>{{ article.date|date:"Y-m-d H:i:s" }}<a href="/show/?pk={{ article.id }}"> | {{ article.title }}</a></li>
     {% endfor %}
 </ul>
+<div class="pagination">
+    {% if cur_page > 1 %}
+        <a href="/{{ class }}/?page_num={{ cur_page|add:-1 }}">&laquo;</a>
+    {% endif%}
 
+
+    {% for i in page_count %}
+        {% if cur_page == i %}
+        <a class="active" href="/{{ class }}/?page_num={{ i|add:1 }}">{{ i|add:1 }}</a>
+        {% else %}
+        <a href="/{{ class }}/?page_num={{ i|add:1 }}">{{ i|add:1 }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if cur_page < page_count|length %}
+        <a href="/{{ class }}/?page_num={{ cur_page|add:1 }}">&raquo;</a>
+    {% endif%}
+</div>
 {% endblock %}

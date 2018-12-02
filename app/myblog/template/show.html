@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 
+<title>{{ article.title }} | 068089DY</title>
+<h2>{{ article.title }}</h2>
+    <p>{{ article.date }} |
+    <font>阅读:{{ article.volume }}</font> |
+    <font>标签:</font>
+        {% for tag in article.tags.all %}
+    <a href="/tag/?tag={{ tag.name }}&page_num=1"> #{{ tag.name }}</a>,
+        {% endfor %}
+
+
+    </p>
 {{ article.html_content }}
 
 {% endblock %}
