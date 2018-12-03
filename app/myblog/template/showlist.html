@@ -34,20 +34,22 @@
 </ul>
 <div class="pagination">
     {% if cur_page > 1 %}
-        <a href="/{{ class }}/?page_num={{ cur_page|add:-1 }}">&laquo;</a>
+        <a href="/{{ class }}/?page_num={{ cur_page|add:-1 }}{{ params }}">&laquo;</a>
     {% endif%}
 
-
-    {% for i in page_count %}
-        {% if cur_page == i %}
-        <a class="active" href="/{{ class }}/?page_num={{ i|add:1 }}">{{ i|add:1 }}</a>
-        {% else %}
-        <a href="/{{ class }}/?page_num={{ i|add:1 }}">{{ i|add:1 }}</a>
-        {% endif %}
-    {% endfor %}
+    {% if page_count|length <= 1%}
+    {% else%}
+        {% for i in page_count %}
+            {% if cur_page == i %}
+            <a class="active" href="/{{ class }}/?page_num={{ i|add:1 }}{{ params }}">{{ i|add:1 }}</a>
+            {% else %}
+            <a href="/{{ class }}/?page_num={{ i|add:1 }}{{ params }}">{{ i|add:1 }}</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
     {% if cur_page < page_count|length %}
-        <a href="/{{ class }}/?page_num={{ cur_page|add:1 }}">&raquo;</a>
+        <a href="/{{ class }}/?page_num={{ cur_page|add:1 }}{{ params }}">&raquo;</a>
     {% endif%}
 </div>
 {% endblock %}

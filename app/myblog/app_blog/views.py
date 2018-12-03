@@ -39,10 +39,10 @@ def search(request):
         visit(visit_type["ARTICLE"], request, "搜索了" + q)
         # 分页
         page_count = round(articles.count() / PAGE_SIZE)
-        page_num = request.GET.get('page_num')
+        page_num = request.GET.get('page_num', 1)
         articles = paging(articles, page_num)
         return render(request, "showlist.html", {"articles": articles, "page_count": list(range(page_count)),
-                                                 "cur_page": page_num})
+                                                 "cur_page": page_num, "class": "search", "params": "&q="+q})
     return HttpResponse("搞不懂你的请求")
 
 
@@ -116,7 +116,7 @@ def tag(request):
         page_num = request.GET.get('page_num')
         articles = paging(articles, page_num)
         return render(request, "showlist.html", {"articles": articles, "page_count": list(range(page_count)),
-                                                 "cur_page": page_num})
+                                                 "cur_page": page_num, "class": 'tag', "params": "&tag="+tag})
     return HttpResponse("搞不懂你的请求")
 
 
