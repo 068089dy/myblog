@@ -1,12 +1,6 @@
 from .models import Visitor, Article
 
 
-visit_type = {
-    "ARTICLE": 0,
-    "COMMENT": 1,
-    "OTHERS": 2,
-}
-
 PAGE_SIZE = 10
 
 

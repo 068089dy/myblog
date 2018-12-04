@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponseNotFound, HttpResponse
 from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_page
-from .util import visit, visit_type, paging, PAGE_SIZE
+from .CommonViews import PageListView
 # Create your views here.
 
 
@@ -29,119 +29,76 @@ def show(request):
     return HttpResponse("搞不懂你的请求")
 
 
-def search(request):
-    # 关键字搜索
-    if request.GET.get('q', -1) != -1:
-        q = request.GET.get('q')
-        articles = Article.objects.filter(Q(content__icontains=q) |
+class Search(PageListView):
+
+    def victim(self):
+        self.root_router = "search"
+        self.classification = "search"
+        self.articles = None
+        self.cur_page = self.data.GET.get('page_num', 1)
+        if self.data.GET.get('q', -1) == -1:
+            return -1
+        q = self.data.GET.get('q', -1)
+        # self.articles = Article.objects.filter(tags__name=tag).order_by("-date")
+        self.articles = Article.objects.filter(Q(content__icontains=q) |
                                           Q(title__icontains=q) |
                                           Q(description__icontains=q)).order_by("-date")
-        visit(visit_type["ARTICLE"], request, "搜索了" + q)
-        # 分页
-        page_count = round(articles.count() / PAGE_SIZE)
-        page_num = request.GET.get('page_num', 1)
-        articles = paging(articles, page_num)
-        return render(request, "showlist.html", {"articles": articles, "page_count": list(range(page_count)),
-                                                 "cur_page": page_num, "class": "search", "params": "&q="+q})
-    return HttpResponse("搞不懂你的请求")
 
 
-# note, blog, rss, link
-def note(request):
-    classification = "note"
-    articles = Article.objects.filter(classification__name=classification).order_by("-date")
-    # 如果只有一篇文章，则显示文章
-    if len(articles) == 1:
-        article = articles[0]
-        article.volume += 1
-        article.save()
-        article.html_content = mark_safe(article.html_content)
-        visit(visit_type["OTHERS"], request, "访问了" + article.title)
-        return render(request, "show.html", {"article": article})
-    visit(visit_type["OTHERS"], request, "访问了" + classification + "文章列表")
-    # 分页
-    page_count = round(articles.count()/PAGE_SIZE)
-    page_num = request.GET.get('page_num', 1)
-    articles = paging(articles, page_num)
-    return render(request, "showlist.html", {"articles": articles, "page_count": list(range(page_count)),
-                                             "cur_page": int(page_num), "class": classification})
+class Note(PageListView):
+
+    def victim(self):
+        self.root_router = "note"
+        self.classification = "note"
+        self.articles = None
+        self.cur_page = self.data.GET.get('page_num', 1)
+        self.articles = Article.objects.filter(classification__name=self.classification).order_by("-date")
 
 
-def blog(request):
-    classification = "blog"
-    articles = Article.objects.filter(classification__name=classification).order_by("-date")
-    # 如果只有一篇文章，则显示文章
-    if len(articles) == 1:
-        article = articles[0]
-        article.html_content = mark_safe(article.html_content)
-        visit(visit_type["OTHERS"], request, "访问了" + article.title)
-        return render(request, "show.html", {"article": article})
-    visit(visit_type["OTHERS"], request, "访问了" + classification + "文章列表")
-    # 分页
-    page_count = round(articles.count() / PAGE_SIZE)
-    page_num = request.GET.get('page_num')
-    articles = paging(articles, page_num)
-    return render(request, "showlist.html", {"articles": articles, "page_count": list(range(page_count)),
-                                             "cur_page": page_num, "class": classification})
+class Blog(PageListView):
+
+    def victim(self):
+        self.root_router = "blog"
+        self.classification = "blog"
+        self.articles = None
+        self.cur_page = self.data.GET.get('page_num', 1)
+        self.articles = Article.objects.filter(classification__name=self.classification).order_by("-date")
 
 
-def link(request):
-    classification = "link"
-    articles = Article.objects.filter(classification__name=classification).order_by("-date")
-    # 如果只有一篇文章，则显示文章
-    if len(articles) == 1:
-        article = articles[0]
-        article.volume += 1
-        article.save()
-        article.html_content = mark_safe(article.html_content)
-        visit(visit_type["OTHERS"], request, "访问了" + article.title)
-        return render(request, "show.html", {"article": article})
-    visit(visit_type["OTHERS"], request, "访问了" + classification + "文章列表")
-    # 分页
-    page_count = round(articles.count() / PAGE_SIZE)
-    page_num = request.GET.get('page_num')
-    articles = paging(articles, page_num)
-    return render(request, "showlist.html", {"articles": articles, "page_count": list(range(page_count)),
-                                             "cur_page": page_num, "class": classification})
+class Link(PageListView):
+
+    def victim(self):
+        self.root_router = "link"
+        self.classification = "link"
+        self.articles = None
+        self.cur_page = self.data.GET.get('page_num', 1)
+        self.articles = Article.objects.filter(classification__name=self.classification).order_by("-date")
 
 
-def tag(request):
-    # 按标签获取
-    if request.GET.get('tag', -1) != -1:
-        tag = request.GET.get('tag')
-        articles = Article.objects.filter(tags__name=tag).order_by("-date")
-        visit(visit_type["OTHERS"], request, "访问了" + tag + "文章列表")
-        # 分页
-        page_count = articles.count() // PAGE_SIZE + 1
-        page_num = request.GET.get('page_num')
-        articles = paging(articles, page_num)
-        return render(request, "showlist.html", {"articles": articles, "page_count": list(range(page_count)),
-                                                 "cur_page": page_num, "class": 'tag', "params": "&tag="+tag})
-    return HttpResponse("搞不懂你的请求")
+class Tag(PageListView):
+
+    def victim(self):
+        self.root_router = "tag"
+        self.classification = "tag"
+        self.articles = None
+        self.cur_page = self.data.GET.get('page_num', 1)
+        if self.data.GET.get('tag', -1) == -1:
+            return None
+        tag = self.data.GET.get('tag', -1)
+        self.articles = Article.objects.filter(tags__name=tag).order_by("-date")
 
 
-def about(request):
-    classification = "about"
-    articles = Article.objects.filter(classification__name=classification).order_by("-date")
-    # 如果只有一篇文章，则显示文章
-    if len(articles) == 1:
-        article = articles[0]
-        article.volume += 1
-        article.save()
-        article.html_content = mark_safe(article.html_content)
-        visit(visit_type["OTHERS"], request, "访问了" + article.title)
-        return render(request, "show.html", {"article": article})
-    visit(visit_type["OTHERS"], request, "访问了" + classification + "文章列表")
-    # 分页
-    page_count = round(articles.count() / PAGE_SIZE)
-    page_num = request.GET.get('page_num')
-    articles = paging(articles, page_num)
-    return render(request, "showlist.html", {"articles": articles, "page_count": list(range(page_count)),
-                                             "cur_page": page_num, "class": classification})
+class About(PageListView):
+
+    def victim(self):
+        self.root_router = "about"
+        self.classification = "about"
+        self.articles = None
+        self.cur_page = self.data.GET.get('page_num', 1)
+        self.articles = Article.objects.filter(classification__name=self.classification).order_by("-date")
 
 
 from django.contrib.syndication.views import Feed
-from django.urls import reverse
 from .models import Article
 
 
@@ -154,7 +111,7 @@ class BlogFeed(Feed):
         return self.description
 
     def items(self):
-        return Article.objects.all().order_by("-date")
+        return Article.objects.filter(classification__name="blog").order_by("-date")
 
     def item_title(self, item):
         return item.title
