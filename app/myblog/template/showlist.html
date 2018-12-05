@@ -40,7 +40,7 @@
     {% if page_count|length <= 1%}
     {% else%}
         {% for i in page_count %}
-            {% if cur_page == i %}
+            {% if cur_page == i|add:1 %}
             <a class="active" href="/{{ class }}/?page_num={{ i|add:1 }}{{ params }}">{{ i|add:1 }}</a>
             {% else %}
             <a href="/{{ class }}/?page_num={{ i|add:1 }}{{ params }}">{{ i|add:1 }}</a>
